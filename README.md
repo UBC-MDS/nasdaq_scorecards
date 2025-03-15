@@ -6,6 +6,31 @@ In today's digital age, mobile trading apps have made stock trading more accessi
 
 This dashboard was created to encourage a more long-term, fundamentals-driven approach to investing. By analyzing stocks from the **NASDAQ 100**, the dashboard provides a structured way to evaluate companies beyond just price action.  
 
+## Installation  
+
+To set up and run the dashboard locally, follow these steps:  
+
+### 1. Clone the repository  
+```bash
+git clone https://github.com/UBC-MDS/nasdaq_scorecards.git
+cd nasdaq_scorecards
+```
+### 2. Create and activate a conda environment 
+```bash
+conda create --name nasdaq_scorecard python=3.12 -y
+conda activate nasdaq_scorecard
+```
+
+### 3. Install [dependencies](https://github.com/UBC-MDS/nasdaq_scorecards/blob/main/requirements.txt)
+```bash
+pip install -r requirements.txt
+```
+
+### 4. Run the Streamlit app
+```bash
+streamlit run app.py
+```
+
 ## Scoring Metrics  
 
 To quantify key aspects of a stock's fundamentals, I developed a **scoring system** based on five core financial metrics:  
@@ -26,3 +51,5 @@ By visualizing these metrics using **radar charts**, the dashboard allows invest
 - **Summary statistics** for a quick snapshot of market trends.  
 
 This tool aims to shift the focus away from speculative trading and back toward **fundamental investing**, helping investors build a portfolio with long-term sustainability in mind.  
+
+## Installation
