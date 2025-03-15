@@ -1,4 +1,4 @@
-# Nasdaq Scorecard Dashboard  
+# 📈 Nasdaq Scorecard Dashboard  
 
 ## Motivation  
 
