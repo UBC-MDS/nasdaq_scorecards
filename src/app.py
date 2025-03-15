@@ -2,7 +2,10 @@ import pandas as pd
 import numpy as np
 import streamlit as st
 import plotly.express as px
+import plotly.figure_factory as ff
 from sklearn.preprocessing import MinMaxScaler
+from scipy.cluster.hierarchy import linkage
+import time
 
 st.set_page_config(layout="wide")
 
@@ -17,7 +20,7 @@ st.markdown("""
 
 @st.cache_data
 def load_data():
-    data = pd.read_csv("data/QQQM_Data.csv")
+    data = pd.read_csv("data/raw/QQQM_Data.csv")
     return data
 
 def process_data(data): 
@@ -148,17 +151,26 @@ def create_charts(processed_data, scoring_metric="Weight", n=5):
         chart_list.append(radar_chart)
     return chart_list
 
-data_load_state = st.text('Loading data...')
-data_load_state.text("Done! (using st.cache_data)")
 
-data = load_data()
-processed_data = process_data(data)
+
+data_load_state = st.text('Loading data...')
+#data_load_state.text("Done! (using st.cache_data)")
+
+with st.spinner('Loading data...'):
+    time.sleep(1)
+    data = load_data()
+    processed_data = process_data(data)
 
 # Layout the dashboard
 
 # Sidebar
 with st.sidebar:
-    st.title('Stock Score Charts')
+    st.title('Nasdaq Score Charts')
+    st.subheader('View the top 10 stocks in the Nasdaq100 based on different scoring metrics')
+    st.write("By: Jason Lee")
+    st.write("Data: Nasdaq100 as of 02/15/2025")
+    st.write("Github: ")
+    st.markdown('---')
 
     # Sector Selection
     sectors = ["All"] + list(processed_data["Sector"].unique())
@@ -176,8 +188,6 @@ n = min(10, processed_data['Ticker'].count())
 
 charts = create_charts(processed_data, scoring_metric, n=n)
 
-# Radar Charts
-
 col1, col2, col3, col4, col5 = st.columns(5)
 
 avg_dividend_yield = processed_data["DividendYield"].mean()
@@ -192,10 +202,10 @@ col3.metric("Avg Market Cap", value=f"{avg_market_cap / 1e9:,.2f}B") #in billion
 col4.metric("Avg Volume", value=f"{avg_volume / 1e6:,.2f}M") #in millions
 col5.metric("Avg Profit", value=f"{avg_profit / 1e9:,.2f}B") #in billions
 
-tab1, tab2 = st.tabs(["Score Cards", "Data"])
+tab1, tab2, tab3 = st.tabs(["Score Cards", "Dendrogram", "Data"])
 
+# Radar Charts
 with tab1:
-
     with st.container():
         # Loop through the charts and display in rows of 4
         for i in range(0, len(charts), 4):
@@ -205,5 +215,18 @@ with tab1:
                     with cols[j]:  # Assign charts to each column
                         st.plotly_chart(charts[i + j], use_container_width=True)
 
+# Dendrogram
 with tab2:
+    if len(processed_data) > 1:
+        X = processed_data[["Income", "Pricing", "Size", "Liquidity", "Profit"]].values
+        labels = processed_data["Ticker"].tolist()
+
+        fig = ff.create_dendrogram(X, labels=labels, color_threshold=0.8)
+        fig.update_layout(width=800, height=500)
+        st.plotly_chart(fig)
+    else:
+        st.write("Not enough data to generate dendrogram")
+
+# Data
+with tab3:
     st.write(processed_data)
