@@ -96,7 +96,7 @@ def create_radar_chart(ticker, data, fill_color='rgba(0, 128, 255, 0.4)', line_c
         theta="Metric",
         line_close=True,  # Ensures shape closure
         title=f"{ticker}",
-        hover_data="Actual"
+        hover_data=["Actual"]
     )
 
     fig.update_layout(
@@ -165,7 +165,7 @@ with st.spinner('Loading data...'):
 
 # Sidebar
 with st.sidebar:
-    st.title('Nasdaq Score Charts')
+    st.title('Nasdaq Score Cards')
     st.subheader('View the top 10 stocks in the Nasdaq100 based on different scoring metrics')
     st.write("By: Jason Lee")
     st.write("Data: Nasdaq100 as of 02/15/2025")
