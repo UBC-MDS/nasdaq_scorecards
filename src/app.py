@@ -178,6 +178,12 @@ with st.sidebar:
     if sector != 'All':
         processed_data = processed_data[processed_data['Sector'] == sector]
 
+    # Scoring Metric Selection
+    scoring_metrics = ["Weight", "Income", "Pricing", "Size", "Liquidity", "Profit"]
+    scoring_metric = st.selectbox('Scoring Metric', scoring_metrics)
+    if scoring_metric != 'Weight':
+        processed_data = processed_data.sort_values(by=scoring_metric, ascending=False)
+
 # Components
 col1, col2, col3, col4, col5 = st.columns(5)
 
@@ -199,11 +205,6 @@ tab1, tab2, tab3 = st.tabs(["Score Cards", "Clustering", "Data"])
 with tab1:
 
     st.write("Top 10 Stocks in Nasdaq100 based on Scoring Metrics")
-
-    scoring_metrics = ["Weight", "Income", "Pricing", "Size", "Liquidity", "Profit"]
-    scoring_metric = st.selectbox('Scoring Metric', scoring_metrics)
-    if scoring_metric != 'Weight':
-        processed_data = processed_data.sort_values(by=scoring_metric, ascending=False)
 
     n = min(10, processed_data['Ticker'].count())
     charts = create_charts(processed_data, scoring_metric, n=n) 
