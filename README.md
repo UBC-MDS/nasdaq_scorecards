@@ -21,24 +21,12 @@ To quantify key aspects of a stock's fundamentals, I developed a **scoring syste
 5. **Profit** – Evaluated based on the company's **trailing 12-month profit**, showing overall profitability.  
 
 ### Clustering
+The **Clustering** tab provides an **unsupervised learning analysis** of Nasdaq 100 stocks using **DBSCAN (Density-Based Spatial Clustering of Applications with Noise)**. This method is used to identify natural groupings of stocks based on fundamental features such as income, pricing, size, liquidity, and profit. To visualize the clusters, **Principal Component Analysis (PCA)** is used to reduce the dimensionality of the data from 5 scoring metrics to **two principal components (PC1 and PC2)**. In doing so, a **2D scatter plot** can be used for intuitive exploration. 
 
-The **Clustering** tab provides an **unsupervised learning analysis** of Nasdaq 100 stocks using **DBSCAN (Density-Based Spatial Clustering of Applications with Noise)**. This method is used to identify natural groupings of stocks based on fundamental features such as income, pricing, size, liquidity, and profit.
-
-### PCA 2D Projection  
-
-To visualize the clustering, **Principal Component Analysis (PCA)** is used to reduce the dimensionality of the 5 scoring metrics to **two principal components (PC1 and PC2)**. In doing so, a **2D scatter plot** can be used for intuitive exploration.  
-
-### DBSCAN Clustering  
-
-We use **DBSCAN** to group stocks based on their fundamental characteristics. Unlike K-Means, DBSCAN does not require specifying the number of clusters beforehand and is effective at identifying **outliers** in the data.
-
-- **Cluster 0 (Red):** Stocks that exhibit dominant financial characteristics, likely **mega-cap tech companies** such as Apple (AAPL), Microsoft (MSFT), and NVIDIA (NVDA).  
-- **Cluster 1 (Blue):** Other stocks that exhibit varying degrees of financial performance but do not strongly match the profile of the high-performing cluster.  
-- **Outliers:** DBSCAN may label some points as noise if they do not belong to any cluster, indicating unique stocks that do not fit within the dominant groups.  
-
+### Data
+Get a glimpse of the raw data for further exploration
 
 ## Features  
-
 - **Filter stocks by sector** to focus on industries of interest.  
 - **Choose different scoring metrics** to analyze stocks from multiple perspectives.  
 - **Interactive charts** to compare top NASDAQ stocks side by side.  
