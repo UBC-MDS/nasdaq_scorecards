@@ -5,9 +5,14 @@ Interactive Streamlit app that ranks and visualizes the top 10 Nasdaq 100 stocks
 
 ## Motivation  
 
-In today's digital age, mobile trading apps have made stock trading more accessible than ever. However, this ease of access has also gamified the experience, leading many investors to focus more on short-term price movements rather than the underlying fundamentals of the companies they invest in. This dashboard was created to encourage a more long-term, fundamentals-driven approach to investing. 
+In today's digital age, mobile trading apps have made stock trading more accessible than ever. However, this ease of access has also gamified the experience, leading many investors to focus more on short-term price movements rather than the underlying fundamentals of the companies they invest in. This dashboard takes a quantamental approach (a blend of quantitative and fundamental analysis) to help investors visualize and compare stocks in the Nasdaq 100 based on their financial characteristics. It is designed to encourage a more long-term, fundamentals-driven mindset by making stock analysis more intuitive and data-driven.
 
-The dashboard provides a structured way to evaluate companies beyond just price action.  
+This tool is built for both beginner and experienced retail investors:
+
+- For beginners → A 5-metric scoring system simplifies stock comparison, reducing analysis paralysis and making it easier to identify potential investments.
+- For experienced investors → The dashboard offers deeper insights, allowing users to explore how Nasdaq 100 companies naturally group together based on their financial traits. 
+
+By combining intuitive visualizations with machine learning techniques, this dashboard provides a structured, data-backed approach to evaluating stocks.
 
 ## App Description
 
@@ -25,7 +30,7 @@ To quantify key aspects of a stock's fundamentals, I developed a **scoring syste
 The **Clustering** tab helps identify patterns among Nasdaq 100 stocks by grouping companies with **similar financial characteristics**. This is done using an **unsupervised machine learning technique** called **DBSCAN (Density-Based Spatial Clustering of Applications with Noise)**, which automatically detects groups of stocks based on the 5 scoring metrics mentioned above. The groupings of the different stocks are visualised using a **2D scatter plot** can be used for intuitive exploration. To achieve this 2D projection of the 5 scoring metrics, a dimensionality reduction technique called PCA was used.
 
 ### Data
-Get a glimpse of the raw data for further exploration
+Get a glimpse of the raw data for further exploration.
 
 ## Features  
 - **Filter stocks by sector** to focus on industries of interest.  
