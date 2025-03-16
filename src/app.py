@@ -4,7 +4,9 @@ import streamlit as st
 import plotly.express as px
 import plotly.figure_factory as ff
 from sklearn.preprocessing import MinMaxScaler
-from scipy.cluster.hierarchy import linkage
+from sklearn.decomposition import PCA
+import scipy.cluster.hierarchy as sch
+from sklearn.cluster import DBSCAN
 import time
 
 st.set_page_config(layout="wide")
@@ -93,17 +95,15 @@ def create_radar_chart(ticker, data, fill_color='rgba(0, 128, 255, 0.4)', line_c
         r="Score", 
         theta="Metric",
         line_close=True,  # Ensures shape closure
-        title=f"{ticker}"
+        title=f"{ticker}",
+        hover_data="Actual"
     )
 
     fig.update_layout(
-    autosize=False,
-    width = 200,
-    height = 200,
-    template="plotly_dark"
-    )
-
-    fig.update_layout(
+        autosize=False,
+        width = 200,
+        height = 200,
+        template="plotly_dark",
         margin=dict(l=40, r=40, t=30, b=40),
         polar=dict(radialaxis=dict(visible=True, tickfont=dict(size=8))),
         font=dict(size=12),
@@ -169,7 +169,7 @@ with st.sidebar:
     st.subheader('View the top 10 stocks in the Nasdaq100 based on different scoring metrics')
     st.write("By: Jason Lee")
     st.write("Data: Nasdaq100 as of 02/15/2025")
-    st.write("Github: ")
+    st.write("Github: https://github.com/UBC-MDS/nasdaq_scorecards")
     st.markdown('---')
 
     # Sector Selection
@@ -177,17 +177,8 @@ with st.sidebar:
     sector = st.selectbox('Sector', sectors)
     if sector != 'All':
         processed_data = processed_data[processed_data['Sector'] == sector]
-    
-    scoring_metrics = ["Weight", "Income", "Pricing", "Size", "Liquidity", "Profit"]
-    scoring_metric = st.selectbox('Scoring Metric', scoring_metrics)
-    if scoring_metric != 'Weight':
-        processed_data = processed_data.sort_values(by=scoring_metric, ascending=False)
 
 # Components
-n = min(10, processed_data['Ticker'].count())
-
-charts = create_charts(processed_data, scoring_metric, n=n)
-
 col1, col2, col3, col4, col5 = st.columns(5)
 
 avg_dividend_yield = processed_data["DividendYield"].mean()
@@ -202,10 +193,21 @@ col3.metric("Avg Market Cap", value=f"{avg_market_cap / 1e9:,.2f}B") #in billion
 col4.metric("Avg Volume", value=f"{avg_volume / 1e6:,.2f}M") #in millions
 col5.metric("Avg Profit", value=f"{avg_profit / 1e9:,.2f}B") #in billions
 
-tab1, tab2, tab3 = st.tabs(["Score Cards", "Dendrogram", "Data"])
+tab1, tab2, tab3 = st.tabs(["Score Cards", "Clustering", "Data"])
 
 # Radar Charts
 with tab1:
+
+    st.write("Top 10 Stocks in Nasdaq100 based on Scoring Metrics")
+
+    scoring_metrics = ["Weight", "Income", "Pricing", "Size", "Liquidity", "Profit"]
+    scoring_metric = st.selectbox('Scoring Metric', scoring_metrics)
+    if scoring_metric != 'Weight':
+        processed_data = processed_data.sort_values(by=scoring_metric, ascending=False)
+
+    n = min(10, processed_data['Ticker'].count())
+    charts = create_charts(processed_data, scoring_metric, n=n) 
+
     with st.container():
         # Loop through the charts and display in rows of 4
         for i in range(0, len(charts), 4):
@@ -215,17 +217,80 @@ with tab1:
                     with cols[j]:  # Assign charts to each column
                         st.plotly_chart(charts[i + j], use_container_width=True)
 
-# Dendrogram
+    with st.expander("ℹ️ More Info"):
+        st.markdown("""
+        - **Weight**: Weight of the stock in the Nasdaq100 index  
+        - **Income**: Dividend Yield  
+        - **Pricing**: Price to Earnings Ratio  
+        - **Size**: Market Capitalization  
+        - **Liquidity**: Volume  
+        - **Profit**: Profit TTM  
+        """)
+
+# Clustering
 with tab2:
+
     if len(processed_data) > 1:
+        # Extract features for PCA
         X = processed_data[["Income", "Pricing", "Size", "Liquidity", "Profit"]].values
         labels = processed_data["Ticker"].tolist()
 
-        fig = ff.create_dendrogram(X, labels=labels, color_threshold=0.8)
-        fig.update_layout(width=800, height=500)
+        # Apply PCA for 2D visualization
+        pca = PCA(n_components=2)
+        X_pca = pca.fit_transform(X)
+
+        # Explained variance
+        explained_var = pca.explained_variance_ratio_ * 100
+        total_variance = np.sum(explained_var)
+
+        # Convert to DataFrame
+        pca_df = processed_data.copy()
+        pca_df["PC1"], pca_df["PC2"] = X_pca[:, 0], X_pca[:, 1]
+
+        # Apply DBSCAN Clustering
+        dbscan = DBSCAN(eps=0.3, min_samples=3)  # Adjust parameters as needed
+        pca_df["Cluster"] = dbscan.fit_predict(X_pca)
+
+        # Map noise points (-1) separately for better visibility
+        pca_df["Cluster_Label"] = pca_df["Cluster"].astype(str)
+        pca_df.loc[pca_df["Cluster"] == -1, "Cluster_Label"] = "Outlier"
+
+        # Round numeric values to 2 decimal places
+        rounded_cols = ["Income", "Pricing", "Size", "Liquidity", "Profit", "PC1", "PC2"]
+        pca_df[rounded_cols] = pca_df[rounded_cols].round(2)
+
+        # Define a better color mapping
+        unique_clusters = pca_df["Cluster_Label"].unique()
+        cluster_colors = {str(cluster): px.colors.qualitative.Set1[i % 10] for i, cluster in enumerate(unique_clusters)}
+        cluster_colors["Outlier"] = "red"  # Make outliers red
+
+        # Create scatter plot with DBSCAN clusters
+        fig = px.scatter(
+            pca_df, x="PC1", y="PC2", 
+            color=pca_df["Cluster_Label"],  # Color by DBSCAN cluster (outliers separate)
+            color_discrete_map=cluster_colors,
+            text=pca_df["Ticker"],  # Show stock tickers
+            hover_data={  
+                "Ticker": True,
+                "Name": True,  # Full company name
+                "Income": ":.2f",
+                "Pricing": ":.2f",
+                "Size": ":.2f",
+                "Liquidity": ":.2f",
+                "Profit": ":.2f",
+                "PC1": ":.2f",
+                "PC2": ":.2f",
+                "Cluster": True,  # Show DBSCAN-assigned cluster
+            },
+            title=f"PCA 2D Projection of Stock Features (DBSCAN Clustering, Explained Variance: {total_variance:.2f}%)",
+            width=1000, height=700
+        )
+
+        fig.update_traces(textposition='top center', marker=dict(size=10, opacity=0.8))
+
         st.plotly_chart(fig)
     else:
-        st.write("Not enough data to generate dendrogram")
+        st.write("Not enough data to generate PCA visualization")
 
 # Data
 with tab3:
