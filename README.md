@@ -34,6 +34,8 @@ Get a glimpse of the raw data for further exploration
 
 This tool aims to shift the focus away from speculative trading and back toward **fundamental investing**, helping investors build a portfolio with long-term sustainability in mind. 
 
+![demo](img/demo.gif)
+
 ## Installation  
 
 To set up and run the dashboard locally, follow these steps:  
