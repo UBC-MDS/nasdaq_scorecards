@@ -16,6 +16,8 @@ By combining intuitive visualizations with machine learning techniques, this das
 
 ## App Description
 
+![video demo](img/demo.mp4)
+
 ### Score Cards
 To quantify key aspects of a stock's fundamentals, I developed a **scoring system** based on five core financial metrics. By visualizing these metrics using **radar charts**, the dashboard allows investors to quickly compare stocks and make more informed, data-driven decisions.   
 
