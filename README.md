@@ -1,4 +1,4 @@
-# 📈 Nasdaq100 Scorecard Dashboard  
+# 📈 Nasdaq Scorecards  
 Author/Developer: Jason Lee
 
 Interactive Streamlit app that ranks and visualizes the top 10 Nasdaq 100 stocks based on fundamental metrics like income, pricing, size, liquidity, and profit, helping investors make data-driven decisions.
@@ -21,7 +21,8 @@ To quantify key aspects of a stock's fundamentals, I developed a **scoring syste
 5. **Profit** – Evaluated based on the company's **trailing 12-month profit**, showing overall profitability.  
 
 ### Clustering
-The **Clustering** tab provides an **unsupervised learning analysis** of Nasdaq 100 stocks using **DBSCAN (Density-Based Spatial Clustering of Applications with Noise)**. This method is used to identify natural groupings of stocks based on fundamental features such as income, pricing, size, liquidity, and profit. To visualize the clusters, **Principal Component Analysis (PCA)** is used to reduce the dimensionality of the data from 5 scoring metrics to **two principal components (PC1 and PC2)**. In doing so, a **2D scatter plot** can be used for intuitive exploration. 
+
+The **Clustering** tab helps identify patterns among Nasdaq 100 stocks by grouping companies with **similar financial characteristics**. This is done using an **unsupervised machine learning technique** called **DBSCAN (Density-Based Spatial Clustering of Applications with Noise)**, which automatically detects groups of stocks based on the 5 scoring metrics mentioned above. The groupings of the different stocks are visualised using a **2D scatter plot** can be used for intuitive exploration. To achieve this 2D projection of the 5 scoring metrics, a dimensionality reduction technique called PCA was used.
 
 ### Data
 Get a glimpse of the raw data for further exploration
