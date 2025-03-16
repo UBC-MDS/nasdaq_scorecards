@@ -1,7 +1,7 @@
 # 📈 Nasdaq Scorecards  
 Author/Developer: Jason Lee
 
-Interactive Streamlit app that ranks and visualizes the top 10 Nasdaq 100 stocks based on fundamental metrics like income, pricing, size, liquidity, and profit, helping investors make data-driven decisions.
+Interactive Streamlit app that ranks and visualizes the top 10 Nasdaq 100 stocks based on fundamental metrics like income, pricing, size, liquidity, and profit, helping investors make data-driven decisions. Visit the app [here](https://nasdaq-score-cards.streamlit.app)!
 
 ## Motivation  
 
